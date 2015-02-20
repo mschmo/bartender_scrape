@@ -7,17 +7,17 @@ from config import MAILGUN_API_KEY, MAILGUN_MESSAGE_URL
 
 
 # Craigslist stuff
-BARTENDER_URL = 'http://philadelphia.craigslist.org/search/fbh?query=bartender'
+CRAIGSLIST_URL = 'http://philadelphia.craigslist.org'
+BARTENDER_ENDPOINT = '/search/fbh?query=bartender'
 # KEYWORDS = ('bartender', 'busser', 'runner', 'barback', 'bar back', 'dishwasher')
 AREAS = ('philadelphia', 'center city', 'fairmount', 'art museum', 'northern liberties',
         'broad', 'grad.', 'hosp.', 'graduate', 'temple', 'rittenhouse')
 
 def bar_scrape():
-    soup = BeautifulSoup(requests.get(BARTENDER_URL).text)
+    soup = BeautifulSoup(requests.get('{}{}'.format(CRAIGSLIST_URL, BARTENDER_URL).text)
     good_positions = []
     for position in soup.findAll('p', {'class': 'row'}):
-        position_id = position['data-pid']
-        if already_posted(position_id):
+        if already_posted(position['data-pid']):
             continue
         inner_text = position.contents[3].text.lower()
         location = re.search('\(([^()]+)\)', inner_text)
@@ -26,7 +26,7 @@ def bar_scrape():
         location = location.group(0)
         for area in AREAS:
             if area in location:
-                link = 'http://philadelphia.craigslist.org{}'.format(position.contents[1]['href'])
+                link = '{}{}'.format(CRAIGSLIST_URL, position.contents[1]['href'])
                 good_positions.append({'title': inner_text, 'link': link})
                 break
     if good_positions:
