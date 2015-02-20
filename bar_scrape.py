@@ -14,7 +14,7 @@ AREAS = ('philadelphia', 'center city', 'fairmount', 'art museum', 'northern lib
         'broad', 'grad.', 'hosp.', 'graduate', 'temple', 'rittenhouse')
 
 def bar_scrape():
-    soup = BeautifulSoup(requests.get('{}{}'.format(CRAIGSLIST_URL, BARTENDER_URL).text)
+    soup = BeautifulSoup(requests.get('{}{}'.format(CRAIGSLIST_URL, BARTENDER_ENDPOINT)).text)
     good_positions = []
     for position in soup.findAll('p', {'class': 'row'}):
         if already_posted(position['data-pid']):
@@ -61,4 +61,4 @@ def get_email_body(positions):
 
 
 if __name__ == '__main__':
-    bar_scrape()
+    print(bar_scrape())
