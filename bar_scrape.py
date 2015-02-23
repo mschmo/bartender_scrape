@@ -11,7 +11,7 @@ CRAIGSLIST_URL = 'http://philadelphia.craigslist.org'
 BARTENDER_ENDPOINT = '/search/fbh?query=bartender'
 # KEYWORDS = ('bartender', 'busser', 'runner', 'barback', 'bar back', 'dishwasher')
 AREAS = ('philadelphia', 'center city', 'fairmount', 'art museum', 'northern liberties',
-        'broad', 'grad.', 'hosp.', 'graduate', 'temple', 'rittenhouse')
+        'broad', 'grad.', 'hosp.', 'graduate', 'rittenhouse')
 
 def bar_scrape():
     soup = BeautifulSoup(requests.get('{}{}'.format(CRAIGSLIST_URL, BARTENDER_ENDPOINT)).text)
