@@ -1,4 +1,7 @@
+.idea/
 *.pyc
 config.py
 venv
+env
 previous_posts.txt
+.DS_Store

@@ -13,6 +13,7 @@ BARTENDER_ENDPOINT = '/search/fbh?query=bartender'
 AREAS = ('philadelphia', 'center city', 'fairmount', 'art museum', 'northern liberties',
         'broad', 'grad.', 'hosp.', 'graduate', 'rittenhouse', 'cc', 'south street')
 
+
 def bar_scrape():
     soup = BeautifulSoup(requests.get('{}{}'.format(CRAIGSLIST_URL, BARTENDER_ENDPOINT)).text)
     good_positions = []
@@ -27,21 +28,23 @@ def bar_scrape():
         for area in AREAS:
             if area in location:
                 link = '{}{}'.format(CRAIGSLIST_URL, position.contents[1]['href'])
-                good_positions.append({'title': inner_text, 'link': link})
+                good_positions.append({'title': inner_text, 'link': link, 'location': area})
                 break
     if good_positions:
         email_body = get_email_body(good_positions)
-        return send_position_message(email_body)
+        return send_position_message(email_body, good_positions)
 
-def send_position_message(body):
+
+def send_position_message(body, jobs):
     data = {
         'from': 'mattschmo@gmail.com',
         'to': 'mattschmo@gmail.com',
-        'subject': 'New Bartending Position',
+        'subject': 'New Bartending Job ({})'.format(', '.join(set(job['location'].strip('()') for job in jobs))),
         'html': body
     }
     response = requests.post(MAILGUN_MESSAGE_URL, auth=('api', MAILGUN_API_KEY), data=data)
     return response.text
+
 
 def already_posted(item_id):
     file_path = '{directory}/previous_posts.txt'.format(
@@ -53,6 +56,7 @@ def already_posted(item_id):
         f.write("{}\n".format(item_id))
         f.truncate()
     return False
+
 
 def get_email_body(positions):
     return '<html><body><ul>{}</ul></body></html>'.format(
