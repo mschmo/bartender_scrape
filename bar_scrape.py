@@ -25,11 +25,9 @@ def bar_scrape():
         if not location:
             continue
         location = location.group(0)
-        for area in AREAS:
-            if area in location:
-                link = '{}{}'.format(CRAIGSLIST_URL, position.contents[1]['href'])
-                good_positions.append({'title': inner_text, 'link': link, 'location': area})
-                break
+        if any([area in location for area in AREAS]):
+            link = '{}{}'.format(CRAIGSLIST_URL, position.contents[1]['href'])
+            good_positions.append({'title': inner_text, 'link': link, 'location': location})
     if good_positions:
         email_body = get_email_body(good_positions)
         return send_position_message(email_body, good_positions)
